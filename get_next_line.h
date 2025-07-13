@@ -1,0 +1,19 @@
+#ifndef GET_NEXT_LINE_H
+# define GET_NEXT_LINE_H
+
+# include <unistd.h>
+# include <fcntl.h>
+# include <stdlib.h>
+# include <stdio.h>
+
+
+# ifndef BUFFER_SIZE
+#  define BUFFER_SIZE 4
+# endif
+
+char	*ft_strchr(char *s, int c);
+char	*ft_join_buffers(char *previous, char *current);
+void	*ft_memcpy(void *dest, const void *src, size_t n);
+size_t	ft_strlen(const char *s);
+
+#endif
