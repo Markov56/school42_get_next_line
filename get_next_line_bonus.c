@@ -1,4 +1,4 @@
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 static char	*ft_copy_buff(char *buff, size_t len)
 {
@@ -68,15 +68,15 @@ static char	*ft_get_buff(int fd, char *buff)
 
 char	*get_next_line(int fd)
 {
-	static char	*buff = NULL;
+	static char	*buffs[MAX_FD];
 	char		*line;
 
-	if(fd < 0 || BUFFER_SIZE <= 0)
+	if(fd < 0 || BUFFER_SIZE <= 0 || fd >= MAX_FD)
 		return (NULL);
-	buff = ft_get_buff(fd, buff);
-	if (!buff)
+	buffs[fd] = ft_get_buff(fd, buffs[fd]);
+	if (!buffs[fd])
 		return (NULL);	
-	line = ft_extract_line(&buff);
+	line = ft_extract_line(&buffs[fd]);
 	return (line);
 }
 
@@ -85,18 +85,31 @@ char	*get_next_line(int fd)
 
 int	main(void)
 {
-	int		fd;
-	char	*line;
+	int		fd1, fd2;
+	char	*line1, *line2;
 
-	fd = open("text.txt", O_RDONLY);
-	line = get_next_line(fd);
-	while (line)
+	fd1 = open("text.txt", O_RDONLY);
+	fd2 = open("text1.txt", O_RDONLY);
+	while (1)
 	{
-		printf("line: %s", line);
-		free(line);
-		line = get_next_line(fd);
+		line1 = get_next_line(fd1);
+		line2 = get_next_line(fd2);
+		if (!line1 && !line2)
+			break;
+		if (line1)
+		{
+			printf("File1: %s", line1);
+			free(line1);
+		}
+		if (line2)
+		{
+			printf("File2: %s", line2);
+			free(line2);
+		}
 	}
-	close(fd);
+	close (fd1);
+	close (fd2);
+	
 	return (0);
 }
-	*/
+*/
