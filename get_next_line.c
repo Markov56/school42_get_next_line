@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rmarkov <rmarkov@student.42berlin.de>      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/14 14:15:23 by rmarkov           #+#    #+#             */
+/*   Updated: 2025/07/14 14:15:28 by rmarkov          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "get_next_line.h"
 
 static char	*ft_copy_buff(char *buff, size_t len)
@@ -30,13 +42,14 @@ static char	*ft_extract_line(char **buff)
 	if (!line)
 		return (NULL);
 	remainder = ft_copy_buff(pos + 1, ft_strlen(pos + 1));
-	if (!remainder)
-	{
-		free(line);
-		return (NULL);
-	}
 	free(*buff);
-	*buff = remainder;
+	if (remainder && *remainder)
+		*buff = remainder;
+	else
+	{
+		free(remainder);
+		*buff = NULL;
+	}
 	return (line);
 }
 
@@ -49,7 +62,7 @@ static char	*ft_get_buff(int fd, char *buff)
 	current_buff = (char *)malloc(BUFFER_SIZE + 1);
 	if (!current_buff)
 		return (NULL);
-	while(bytes_read > 0 && !ft_strchr(buff, '\n'))
+	while (bytes_read > 0 && !ft_strchr(buff, '\n'))
 	{
 		bytes_read = read(fd, current_buff, BUFFER_SIZE);
 		if (bytes_read == 0)
@@ -57,6 +70,7 @@ static char	*ft_get_buff(int fd, char *buff)
 		if (bytes_read < 0)
 		{
 			free (current_buff);
+			free (buff);
 			return (NULL);
 		}
 		current_buff[bytes_read] = '\0';
@@ -71,18 +85,16 @@ char	*get_next_line(int fd)
 	static char	*buff = NULL;
 	char		*line;
 
-	if(fd < 0 || BUFFER_SIZE <= 0)
+	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
 	buff = ft_get_buff(fd, buff);
 	if (!buff)
-		return (NULL);	
+		return (NULL);
 	line = ft_extract_line(&buff);
 	return (line);
 }
 
 /*
-#include <stdio.h>
-
 int	main(void)
 {
 	int		fd;
@@ -99,4 +111,4 @@ int	main(void)
 	close(fd);
 	return (0);
 }
-	*/
+*/
